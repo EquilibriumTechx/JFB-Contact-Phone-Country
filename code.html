@@ -1,0 +1,42 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/css/intlTelInput.css">
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/intlTelInput.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"></script>
+
+<!-- Your JavaScript code -->
+<script>
+  var input = document.querySelector("#frm_88_phone_no"); //The Primary Text Field ID.
+  var iti = window.intlTelInput(input, {
+    utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js",
+  });
+
+  var copyInput = document.querySelector("#frm_88_phone_no_copy"); //The second text field ID, which could be a hidden field or a text filed 
+
+  function updatePhoneNumber() {
+    // Get the selected country data
+    var countryData = iti.getSelectedCountryData();
+    var dialCode = countryData.dialCode;
+
+    // Get the value of the text field
+    var phoneNumber = input.value;
+
+    // Set the value of the target text field
+    copyInput.value = '+' + dialCode + phoneNumber;
+  }
+
+  // Add event listener for input changes
+  input.addEventListener("input", updatePhoneNumber);
+
+  // Add event listener for dial code changes
+  iti.promise.then(function () {
+    var selectedDialCode = iti.getSelectedCountryData().dialCode;
+    input.setAttribute("data-dial-code", selectedDialCode);
+    input.addEventListener("countrychange", function () {
+      var newDialCode = iti.getSelectedCountryData().dialCode;
+      if (newDialCode !== selectedDialCode) {
+        selectedDialCode = newDialCode;
+        input.setAttribute("data-dial-code", selectedDialCode);
+        updatePhoneNumber();
+      }
+    });
+  });
+</script>
